@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"time"
 )
 
 func validateString(r *http.Request) bool {
@@ -104,4 +105,13 @@ func validateCheckbox(r *http.Request) bool {
 		return true
 	}
 	return false
+}
+
+func validateDateString(r *http.Request) bool {
+	datestr := r.Form.Get("date")
+	_, err := time.Parse("1/2/06", datestr)
+	if err != nil {
+		return false
+	}
+	return true
 }
