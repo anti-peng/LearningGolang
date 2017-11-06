@@ -2,9 +2,10 @@ package toy1
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -33,38 +34,40 @@ func CheckError(err error) {
 	}
 }
 
-func demo2() {
-	tcpAddr, err := net.ResolveTCPAddr("tcp4", ":7777")
-	CheckError(err)
+// func handleClient(conn net.Conn) {
+func handleClient(conn net.TCPConn) {
+	conn.SetReadDeadline(time.Now().Add(2 * time.Minute)) // set 2 minutes timeout
+	conn.SetWriteDeadline(time.Now().Add(2 * time.Minute))
+	// conn.SetKeepAlive(true)
+	// conn.SetKeepAlivePeriod(d time.Duration)
+	// func (t *net.TCPConn) SetKeepAlive(keepalive bool)
+	// 这里是 net.Conn 不是 net.TCPConn
 
-	conn, err := net.DialTCP("tcp4", nil, tcpAddr)
-	CheckError(err)
-
-	_, err = conn.Write([]byte("HEAD / HTTP/1.0\r\n\r\n"))
-	CheckError(err)
-
-	// io - ioutil - ReadAll
-	// Reads from io.Reader until an error or EOF and returns the data it read.
-	// A successful call returns err == nil not err == EOF, cause it is defined to read
-	// from src until EOF not treat and EOF from Read as an error to be reported.
-	result, err := ioutil.ReadAll(conn)
-	CheckError(err)
-	fmt.Println(string(result))
-
-	os.Exit(0)
-}
-
-func Demo2() {
-	demo2()
-}
-
-func handleClient(conn net.Conn) {
-	fmt.Fprintf(os.Stdout, "hanling client", nil)
 	defer conn.Close()
-	conn.Write([]byte(time.Now().String()))
+	request := make([]byte, 1024) // set maxium request length to 1024B to prevent flood attack
+
+	for {
+		readLen, err := conn.Read(request)
+		if err != nil {
+			fmt.Println(err.Error())
+			break
+		}
+
+		if readLen == 0 {
+			break // connection already closed by client
+		} else if strings.TrimSpace(string(request[:readLen])) == "timestamp" {
+			daytime := strconv.FormatInt(time.Now().Unix(), 10)
+			conn.Write([]byte(daytime))
+		} else {
+			daytime := time.Now().String()
+			conn.Write([]byte(daytime))
+		}
+
+		request = make([]byte, 1024) // clear last read content
+	}
 }
 
-func Demo3() {
+func demo2() {
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", ":7777")
 	CheckError(err)
 
@@ -72,7 +75,8 @@ func Demo3() {
 	CheckError(err)
 
 	for {
-		conn, err := listener.Accept()
+		// conn, err := listener.Accept()
+		conn, err := listener.AcceptTCP()
 		if err != nil {
 			continue
 		}
