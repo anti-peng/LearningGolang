@@ -9,6 +9,11 @@ import (
 	"time"
 )
 
+// package net
+// Low-level networking primitives, but most clients will need only the
+// basic interface provided by Dial, Listen and Accept functions and
+// the associated Conn and Listener interface.
+
 // open -> write / read -> close
 // https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/images/8.1.socket.png?raw=true
 
@@ -35,7 +40,7 @@ func CheckError(err error) {
 }
 
 // func handleClient(conn net.Conn) {
-func handleClient(conn net.TCPConn) {
+func handleClient(conn *net.TCPConn) {
 	conn.SetReadDeadline(time.Now().Add(2 * time.Minute)) // set 2 minutes timeout
 	conn.SetWriteDeadline(time.Now().Add(2 * time.Minute))
 	// conn.SetKeepAlive(true)
