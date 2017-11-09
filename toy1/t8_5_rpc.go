@@ -3,6 +3,7 @@ package toy1
 import (
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"net/rpc"
 	"os"
@@ -91,3 +92,41 @@ func client() {
 	}
 	fmt.Printf("Arith: %d/%d=%d remainder %d\n", args.A, args.B, quot.Quo, quot.Rem)
 }
+
+// TCP RPC
+
+func tcpServer() {
+	arith := new(Arith)
+	rpc.Register(arith)
+
+	tcpAddr, err := net.ResolveTCPAddr("tcp", ":1234")
+	CheckError(err)
+
+	listener, err := net.ListenTCP("tcp", tcpAddr)
+	CheckError(err)
+
+	// block
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			continue
+		}
+		rpc.ServeConn(conn)
+	}
+}
+
+func tcpClient() {
+	cli, err := rpc.Dial("tcp", ":1234")
+	CheckError(err)
+
+	// ....
+	cli.Call("Arith.Multiply", nil, nil)
+	// ...
+}
+
+// JSON RPC
+// 数据编码采用 JSON 非 gob
+// 使用 package json-rpc
+
+// jsonrpc.ServeConn(conn)
+// jsonrpc.Dial("tcp", ":1234")
