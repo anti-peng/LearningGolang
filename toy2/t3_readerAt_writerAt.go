@@ -113,3 +113,17 @@ func demoReadFrom(filename string) {
 }
 
 // WriterTo
+//
+// type WriterTo interface {
+// 	WriteTo(w Writer) (n int64, err error)
+// }
+func demoWriteTo(filename string) {
+	file, err := os.Open(filename)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	reader := bytes.NewReader([]byte("blahblah"))
+	reader.WriteTo(os.Stdout)
+}
