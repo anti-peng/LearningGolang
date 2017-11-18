@@ -196,3 +196,89 @@ func demoPipe() {
 // func Copy(dst Writer, src Reader) (written int64, err error)
 // copy src -> dst, until src get EOF or error;
 // copy 从 src 读取直到 EOF为止
+// copy 实现了 ReadFrom
+// dst.ReadFrom(src)
+// func CopyN(dst Writer, src Reader, n int64) (written int64, err error)
+
+// ReadAtLeast
+// func ReadAtLeast(r Reader, buf []byte, min int) (n int, err error)
+// r -> buf, 直到读了最少 min 个字节为止。返回复制的字节数
+// 如果读取的字节较少，会返回一个 error
+// 1) 没有读取到字节，EOF
+// 2）一个 EOF 发生在读取了少于 min 个字节之后，ErrUnexpectedEOF
+// 3）min > len(buf) ErrShortBuffer
+// 对于返回值，仅当 err == nil 才会 n >= min
+
+// ReadFull
+// func ReadFull(r Reader, buf []byte) (n int, err error)
+// r -> buf
+// 1) 没有读取到字节 EOF
+// 2) not full-filled read ErrUnexpectedEOF
+// 3) only if err == nil, n == len(buf)
+
+// WriteString
+// func WriteString(w Writer, s string) (n int, err error)
+
+// MultiReader / MultiWriter
+// func MultiReader(readers ...Reader) Reader
+// func MultiWriter(writers ...Writer) Writer
+// 接收多个 Reader 或 Writer，返回一个 Reader 或 Writer
+// 操作多个 Reader、Writer 就像操作一个
+// type multiReader struct {
+// 	readers []Reader
+// }
+// type multiWriter struct {
+// 	writers []Writer
+// }
+func demoMultiReader() {
+	readers := []io.Reader{
+		bytes.NewBufferString("from bytes reader"),
+		strings.NewReader("from strings reader"),
+	}
+
+	mr := io.MultiReader(readers...)
+	data := make([]byte, 1024)
+	var (
+		err error
+		n   int
+	)
+
+	for err != io.EOF {
+		tmp := make([]byte, 32)
+		n, err = mr.Read(tmp)
+		if err == nil {
+			data = append(data, tmp[:n]...)
+			data = append(data, '\n')
+		} else {
+			if err != io.EOF {
+				panic(err)
+			}
+		}
+	}
+	fmt.Printf("%s", data)
+}
+
+func demoMultiWriter() {
+	file, err := os.Create("tmp.txt")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	writers := []io.Writer{
+		file,
+		os.Stdout,
+	}
+
+	writer := io.MultiWriter(writers...)
+	writer.Write([]byte("你好 golang\n"))
+}
+
+// TeeReader
+// func TeeReader(r Reader, w Writer) Reader
+// 返回一个 Reader， r -> w, 没有缓存
+
+func demoTeeReader() {
+	reader := io.TeeReader(strings.NewReader("你好 golang\n"), os.Stdout)
+	reader.Read(make([]byte, 1024))
+}
