@@ -1,5 +1,8 @@
 package toy2
 
+import "fmt"
+import "strconv"
+
 // %v 默认格式
 // %+v 结构体带字段名
 // %#v 相应值得Go语法表示
@@ -43,3 +46,33 @@ package toy2
 // ' '		（空格）为数值中省略的正负号留出空白（% d）；
 // 以十六进制（% x, % X）打印字符串或切片时，在字节之间用空格隔开
 // 0		填充前导的0而非空格；对于数字，这会将填充移到正负号之后
+
+// Scanning
+
+// Fprint Fprintf Fprintln Sprint Sprintf Sprintln Print Printf Println
+// Fpxxx writer -> writer
+// Prxxx interface{} -> os.Stdout
+// Sprxx interface{} -> string
+
+// type Stringer interface {
+// 	String() string
+// }
+
+// type Formatter interface {
+// 	Format(f State, c rune)
+// }
+func demoFormat(f fmt.State, c rune) {
+	type person struct {
+		name string
+		age  int
+	}
+
+	var p = &person{"fry", 11}
+
+	if c == 'L' {
+		f.Write([]byte(p.name + " " + strconv.Itoa(p.age)))
+		f.Write([]byte("person has two fields"))
+	} else {
+		f.Write([]byte(fmt.Sprintln(p.name + "-" + strconv.Itoa(p.age))))
+	}
+}
