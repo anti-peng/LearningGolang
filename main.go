@@ -1,7 +1,9 @@
 package main
 
-import "LearningGolang/toy2"
+import "LearningGolang/toy3"
 
 func main() {
-	toy2.DemoScanWords()
+	// toy3.DemoFieldsFunc()
+	// toy3.DemoIndexFunc()
+	toy3.DemoSrcJoin()
 }
