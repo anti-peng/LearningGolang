@@ -1,14 +1,13 @@
 package main
 
 import (
-	"LearningGolang/toy7"
-	"fmt"
+	"LearningGolang/toy8"
+	"os"
 )
 
 func main() {
-	str, err := toy7.DemoFillStd("ls", "-a")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(str))
+	toy8.DemoSyncPool1(os.Stdout, "path", "/search?q=flowers")
+	toy8.DemoSyncPool1(os.Stdout, "path", "/search?q=fruits")
+	toy8.DemoSyncPool1(os.Stdout, "path", "/search?q=vagetables")
+	toy8.DemoSyncPool1(os.Stdout, "path", "/search?q=sugurs")
 }
