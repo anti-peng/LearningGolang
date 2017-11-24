@@ -1,9 +1,14 @@
 package main
 
 import (
-	"LearningGolang/toy4"
+	"LearningGolang/toy7"
+	"fmt"
 )
 
 func main() {
-	toy4.DemoSimTimeoutByTimeAfter()
+	str, err := toy7.DemoFillStd("ls", "-a")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(str))
 }
