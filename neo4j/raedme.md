@@ -51,3 +51,40 @@ collaborative filtering (user)-[:PURCHASED]->* (product)<-[:PURCHASED]-()-[:PURC
 * Although relationships are directed, relationships can always be navigated regardless of direction.
 * Since a relationship always has a start and end node, you can't delete a node without also deleting its associated relationships. To put it in another way, an existing relationship will never point to a non-existing endpoint.
   
+#### User Defined Procedures and Functions
+
+* Extending Cypher
+* Functions  
+  1. simple computations / conversions and return a single value
+  2. can be used in any expression or predicate
+* Procedures  
+  1. are more complex operations and generate streams of results
+  2. must be used with CALL clause and YIELD their result columns
+* Functions & Procedures  
+  * They are generate, fetch or compute data to make is avaliable to later processing steps in your Cypher query
+* Listing & Using Functions & Procedures  
+  * list available functions & procedures `CALL dbms.functions()`, `CALL dbms.procedures()`
+  * each procedure returns one ore more columns of data. With `YIELD` these columns can be selected and also aliased and are then available in you Cypher statement.
+  ```
+  CALL dbms.procedures()
+  YIELD name, signature, description 
+  WITH split(name, ".") AS parts
+  RETURN parts[0..-1] AS package, count(*) AS count, collect(parts[-1]) AS names
+  ORDER BY count DESC
+  ```
+* Deploying Procedures & Functions
+Build your own procedures or downloaded from an community project, they are packaged in a jar-file. -> `$NEO4J_HOME/plugins` Neo4j server and restart.
+* Procedure and Function Gallery  
+  * graph algorithms
+  * index operations
+  * database/api integration
+  * graph refactorings
+  * import and export
+  * spatial index lookup
+  * rdf import and export
+  * and many more
+
+#### Data Modeling
+* A Node can have Relationships, Properties and Labels
+* A Label is a named graph construct that is used to group nodes into sets -> :PERSON. All nodes labeled with the same label belongs to the same set. Many database queries can work with these sets instead of the whole graph, making queries easies to write and more efficient.
+* A NODE may be labeled with any number of labels, including none, making labels an optional addition to the graph.
