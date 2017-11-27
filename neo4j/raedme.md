@@ -41,4 +41,13 @@ collaborative filtering (user)-[:PURCHASED]->* (product)<-[:PURCHASED]-()-[:PURC
   RETURN you, like, neo`
 * `MATCH (you:Person {name:"You"}) 
   FOREACH (name in ["Johan","Rajesh","Anna"] | CREATE (you)-[:FRIEND]-(:Person {name:name}))` FOREACH allows you to execute update operations for each element of a list
+* Find Your Friends `MATCH (you:Person {name:"You"})-[:FRIEND]->(yourFriends) RETURN you, yourFriends`
+* Create Second Degree Friends and Expertise `MATCH (neo:Database {name:"Neo4j"}) MATCH (anna:Person {name:"Anna"}) CREATE (anna)-[:FRIEND]->(:Person:Expert {name:"Amanda"})-[:WORKED_WITH]->(neo)` 
+* Find Someone in your Network Who Can Help You Learn Neo4j `Match (you:Person {name:"You"}) MATCH (expert)-[:WORKED_WITH]->(db:Database {name:"Neo4j"}) MATCH path = shortestPath((you)-[:FRIEND*..5]-(expert)) RETURN db.expert, path`
+
+#### BlingBling
+
+* As relationships are stored efficiently, two nodes can share any number or type of relationships without sacrificing performance.
+* Although relationships are directed, relationships can always be navigated regardless of direction.
+* Since a relationship always has a start and end node, you can't delete a node without also deleting its associated relationships. To put it in another way, an existing relationship will never point to a non-existing endpoint.
   
