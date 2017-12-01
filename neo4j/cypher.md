@@ -54,3 +54,13 @@ Single pattern with two paths or two distinct patterns
 * String-specific comparison operators `STARTS WITH ENDS WITH CONTAINS`
 * Boolean operators `AND OR XOR NOT`
 + String operators `+` for concatenation, `=~` for regex matching
+
+#### NULL
+Testing any value against `null` with both the `=` and the `<>` operators always is `null`. This includes `null = null` and `null <> null`. The only way to reliably test if a value `v` is `null` is by using the special `v IS NULL`, or `v IS NOT NULL` equality operators.
+
+#### Patterns
+* `(a:User)-->(b)`
+* `(a:User:Admin)-->(b)`
+* `(a)-[{blocked: false}]->(b)`
+* `(a)-[:REL_TYPE]->(b)`
+* `(a)-[*2]->(b)` equals to `(a)-->()-->(b)`
