@@ -64,3 +64,8 @@ Testing any value against `null` with both the `=` and the `<>` operators always
 * `(a)-[{blocked: false}]->(b)`
 * `(a)-[:REL_TYPE]->(b)`
 * `(a)-[*2]->(b)` equals to `(a)-->()-->(b)`
+
+#### Clause
+* WITH - Manipulate the output before it is passed on to the following query parts. Another use is to filter on aggregated values.  
+  * `WITH n,m WHERE id(n)<id(m)` interesting ☺
+* MERGE 保证给出的模式在图中一定存在 | 复用已存在的与断言匹配的节点和关系 | 创建新的节点和关系

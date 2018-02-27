@@ -1,13 +1,14 @@
 package main
 
 import (
-	"LearningGolang/toy8"
-	"os"
+	"log"
+	"net/http"
 )
 
 func main() {
-	toy8.DemoSyncPool1(os.Stdout, "path", "/search?q=flowers")
-	toy8.DemoSyncPool1(os.Stdout, "path", "/search?q=fruits")
-	toy8.DemoSyncPool1(os.Stdout, "path", "/search?q=vagetables")
-	toy8.DemoSyncPool1(os.Stdout, "path", "/search?q=sugurs")
+	fs := http.FileServer(http.Dir("/Users/fry/GreatLD/TestNeo4j/pipe.json"))
+	http.Handle("/json", fs)
+
+	log.Println("Listening...")
+	http.ListenAndServe(":3000", nil)
 }
